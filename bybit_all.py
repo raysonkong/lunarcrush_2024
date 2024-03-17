@@ -49,16 +49,15 @@ current_time = time.strftime("%H:%M:%S", t)
 response = requests.get(URL)
 #print(response.json())
 
-coins = response.json()['data']
+apiCallCoins = response.json()["result"]
 
-#print(coins)
+#print(apiCallCoins)
 
-result = []
-for coin in coins:
-    if coin['symbol'][-len(WANTED_CURRENCIES[0]):] == WANTED_CURRENCIES[0]:
-        result.append(EXCHANGES[0] + ":" + coin['symbol'].replace('_', ''))
+symbols = []
+for coin in apiCallCoins:
+    symbols.append("bybit:" + coin["symbol"])
 
-#print(result)
+#print(symbols)
 
 
 # ================================================
@@ -76,7 +75,7 @@ def group_into_n(data_list, n):
 #test = [1,2,3,4,5,6,7,8]
 #print(group_into_n(test, n))
 
-grouped_pairs = group_into_n(result, n)
+grouped_pairs = group_into_n(symbols, n)
 
 #print(grouped_pairs)
 
@@ -99,7 +98,7 @@ grouped_pairs = group_into_n(result, n)
 # /Users/raysonkong/code/python/webscrapping/scripts_v2/cmc_api_to_tradingview/outputs
 def output_to_text_file(nested_grouped_pairs):
     for idx, group in enumerate(nested_grouped_pairs):
-            filename=f"{os.getcwd()}/{EXCHANGES[0]}_ALL_{generation_date}_total_{len(result)}/-1.0 {EXCHANGES[0]}_ALL p.{idx+1} ({generation_date}).txt"
+            filename=f"{os.getcwd()}/{EXCHANGES[0]}_ALL_{generation_date}_total_{len(apiCallCoins)}/-1.0 {EXCHANGES[0]}_ALL p.{idx+1} ({generation_date}).txt"
             os.makedirs(os.path.dirname(filename), exist_ok=True)
             with open(filename, "w") as f:
                 for pair in group:
@@ -112,7 +111,7 @@ def run_srapper():
     output_to_text_file(grouped_pairs)
 
 
-    print("== MEXC All Tickers Retrieved ==")
+    print("== Bybit All Tickers Retrieved ==")
     print('\n')
     #print("======================================================")
 if __name__ =='__main__':
