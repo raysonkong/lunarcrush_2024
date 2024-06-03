@@ -13,16 +13,8 @@ SLEEP_TIME = 0.2
 # ## setup config_cmc.py in the same folder
 # ##
 
-# EXCHANGES=["MEXC"]  # only one
-
-# WANTED_CURRENCIES = ['USDT']  # only one
 
 
-# # # Do not alter below easily
-# # Group size is the max number of coins per each .txt file (output)
-# GROUP_SIZE = len(EXCHANGES) * 1000
-
-# URL = 'https://www.mexc.com/open/api/v2/market/ticker'
 # ## end of Config file
 
 
@@ -46,18 +38,27 @@ current_time = time.strftime("%H:%M:%S", t)
 # ======================== ### 
 
 
-response = requests.get(URL)
-#print(response.json())
+url = "https://lunarcrush.com/api4/public/coins/list/v2?sort=alt_rank&limit=100"
+headers = {
+  'Authorization': 'Bearer ' + myApiKey
+}
 
-apiCallCoins = response.json()["result"]
+response = requests.request("GET", url, headers=headers)
 
-#print(apiCallCoins)
+#print(response.json()['data'])
+coins = response.json()['data']
 
-symbols = []
-for coin in apiCallCoins:
-    symbols.append("bybit:" + coin["symbol"])
+## parse the data into eg. Binance:BTCUSDT
 
-#print(symbols)
+result = []
+
+for coin in coins:
+    for exchange in EXCHANGES:
+        result.append(exchange + ":" + coin['symbol'] + "USDT")
+
+
+#print(result)
+
 
 
 # ================================================
@@ -75,7 +76,7 @@ def group_into_n(data_list, n):
 #test = [1,2,3,4,5,6,7,8]
 #print(group_into_n(test, n))
 
-grouped_pairs = group_into_n(symbols, n)
+grouped_pairs = group_into_n(result, n)
 
 #print(grouped_pairs)
 
@@ -98,7 +99,7 @@ grouped_pairs = group_into_n(symbols, n)
 # /Users/raysonkong/code/python/webscrapping/scripts_v2/cmc_api_to_tradingview/outputs
 def output_to_text_file(nested_grouped_pairs):
     for idx, group in enumerate(nested_grouped_pairs):
-            filename=f"{os.getcwd()}/{EXCHANGES[0]}_ALL_{generation_date}_total_{len(apiCallCoins)}/-1.0 {EXCHANGES[0]}_ALL p.{idx+1} ({generation_date}).txt"
+            filename=f"{os.getcwd()}/{LUNARCRUSH[0]}_ALL_{generation_date}_total_{100}/-1.0 {EXCHANGES[0]}_ALL p.{idx+1} ({generation_date}).txt"
             os.makedirs(os.path.dirname(filename), exist_ok=True)
             with open(filename, "w") as f:
                 for pair in group:
@@ -111,7 +112,7 @@ def run_srapper():
     output_to_text_file(grouped_pairs)
 
 
-    print("== Bybit All Tickers Retrieved ==")
+    print("== LunarCrush 2024 Coins Retrieved ==")
     print('\n')
     #print("======================================================")
 if __name__ =='__main__':
