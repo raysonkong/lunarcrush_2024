@@ -14,6 +14,19 @@ SLEEP_TIME = 0.2
 # ##
 
 
+# EXCHANGES=["BINANCE", "KUCOIN", "OKX", "MEXC"]  # only one
+
+# LUNARCRUSH=['LunarCrush 2024']
+
+# WANTED_CURRENCIES = ['USDT']  # only one
+
+
+# # # Do not alter below easily
+# # Group size is the max number of coins per each .txt file (output)
+# GROUP_SIZE = len(EXCHANGES) * 1000
+
+# myApiKey = "Your Api Key"
+
 
 # ## end of Config file
 
